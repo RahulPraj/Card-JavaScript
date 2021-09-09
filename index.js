@@ -1,5 +1,7 @@
 const taskContainer = document.querySelector(".task__container"); //to excess the class name directly we use querySelector.
 
+const globalStore = [];
+
 const generateNewCard = (taskData) =>`
 <div class="col-md-6 col-lg-4" id=${taskData.id}>
                     <div class="card ">
@@ -21,6 +23,25 @@ const generateNewCard = (taskData) =>`
 
 `;
 
+const loadInitialCardData = () =>{
+    //localstorage to get tasky card data.
+
+    const getCardData = localStorage.getItem("tasky");
+
+    //convert from string to normal  object(to js)
+    const { cards }= JSON.parse(getCardData);
+
+
+ //loop over those array of task object to create html card , inject it to DOM
+cards.map((cardObject) =>{
+    taskContainer.insertAdjacentHTML("beforeend",generateNewCard(cardObject));  //it apply to add card and we have four options use one option then copy the newcard and paste it.
+
+    //updating the globalstore
+    globalStore.push(cardObject);
+
+   })
+}
+
 const saveChanges = () => {
     const taskData = {
         id: `${Date.now()}`, // unique number for id ,it will return every sec a unique number. to include JS expressionin string we use `$` in it.
@@ -31,5 +52,10 @@ const saveChanges = () => {
     };
     
     taskContainer.insertAdjacentHTML("beforeend",generateNewCard(taskData));  //it apply to add card and we have four options use one option then copy the newcard and paste it.
+
+    //update
+    globalStore.push(taskData);
+
+    localStorage.setItem("tasky", JSON.stringify({cards:globalStore}));
 
 };
